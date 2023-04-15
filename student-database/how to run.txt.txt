@@ -1,0 +1,10 @@
+1. Open a terminal.
+2. Go to the location where the StudentApp.jar is located.
+3. Type the following commands: java -jar StudentApp.jar
+4. You should initially see something like this:
+***************************************
+Hi there! What do you want to do today?
+[1] Create new student/s
+[2] View student information
+[3] Exit
+Enter your choice: 
