@@ -11,6 +11,8 @@ public class EmployeeLogin extends JDialog{
     private JLabel logo;
     private JButton loginButton;
     private JButton cancelButton;
+    private JButton regButton;
+    private JLabel noAccountLabel;
 
     public User user;
 
@@ -18,7 +20,7 @@ public class EmployeeLogin extends JDialog{
         super(parent);
         setTitle("Employee Login Form");
         setContentPane(mainPanel);
-        setMinimumSize(new Dimension(480, 300));
+        setMinimumSize(new Dimension(480, 400));
         setModal(true);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -29,6 +31,11 @@ public class EmployeeLogin extends JDialog{
 
         loginButton.addActionListener(e -> loginEmployee());
         cancelButton.addActionListener(e -> dispose());
+
+        regButton.addActionListener(e -> {
+            dispose();
+            EmployeeRegister regForm = new EmployeeRegister(null);
+        });
 
         setVisible(true);
     }
@@ -56,6 +63,7 @@ public class EmployeeLogin extends JDialog{
                     "Login Successful",
                     JOptionPane.INFORMATION_MESSAGE);
             dispose();
+            EmployeeDashboard dashboard = new EmployeeDashboard(null, user);
         } else {
             JOptionPane.showMessageDialog(this,
                     "Wrong credentials. Please try again.",
@@ -90,6 +98,7 @@ public class EmployeeLogin extends JDialog{
 
             if (resultSet.next()) {
                 user = new User();
+                user.setID(resultSet.getInt("ID"));
                 user.setLastName(resultSet.getString("lastname"));
                 user.setFirstName(resultSet.getString("firstname"));
                 user.setPhone(resultSet.getString("phone"));
@@ -110,12 +119,6 @@ public class EmployeeLogin extends JDialog{
     public static void main(String[] args) {
         EmployeeLogin loginForm = new EmployeeLogin(null);
         User user = loginForm.user;
-        if ( user == null ) {
-            JOptionPane.showMessageDialog(loginForm,
-                    "Login Cancelled.",
-                    "Cancelled",
-                    JOptionPane.INFORMATION_MESSAGE);
-        }
         loginForm.dispose();
     }
 }

@@ -78,6 +78,7 @@ public class EmployeeRegister extends JDialog{
                     "Registration Successful",
                     JOptionPane.INFORMATION_MESSAGE);
             dispose();
+            EmployeeLogin loginForm = new EmployeeLogin(null);
         } else {
             JOptionPane.showMessageDialog(this,
                     "Something went wrong. Please try again later.",
@@ -137,13 +138,13 @@ public class EmployeeRegister extends JDialog{
 
     public static void main(String[] args) {
         EmployeeRegister regForm = new EmployeeRegister(null);
-        User user = regForm.user;
-        if ( user == null ) {
-            JOptionPane.showMessageDialog(regForm,
-                    "Registration Cancelled.",
-                    "Cancelled",
-                    JOptionPane.INFORMATION_MESSAGE);
-        }
+//        User user = regForm.user;
+//        if ( user == null ) {
+//            JOptionPane.showMessageDialog(regForm,
+//                    "Registration Cancelled.",
+//                    "Cancelled",
+//                    JOptionPane.INFORMATION_MESSAGE);
+//        }
         regForm.dispose();
     }
 

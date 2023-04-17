@@ -5,6 +5,16 @@ public class User {
     private String email;
     private String password;
 
+    private int ID;
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
     public String getLastName() {
         return lastName;
     }
