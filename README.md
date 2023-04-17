@@ -44,7 +44,9 @@
     <li>Functionalities include:</li>
       <ol>
         <li>Register - adds news employee to the database</li>
-        <li>Login - retrieves employee credentials from database to "login" to the system.</li>
+        <li>Login - existing users can log in to the system.</li>
+        <li>Dashboard - page where logged in users can see details about themselves.</li>
+        <li>Edit and Save - employees can edit their profile and save the updates.</li>
       </ol>
     <li><i>Practice for Object-oriented programming concepts</i></li>
   </ul>
