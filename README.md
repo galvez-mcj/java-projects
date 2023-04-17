@@ -4,7 +4,7 @@
   Java Projects
 </h1>
 
-<h3>Basic Calculator</h3>
+<h3><a href="https://github.com/galvez-mcj/java-projects/tree/main/basic-calculator">Basic Calculator</a></h3>
 <p>
   <ul>
     <li>Created a basic calculator using Java Swing JFrame.</li>
@@ -21,7 +21,7 @@
   </ul>
 </p>
 
-<h3>Student Database</h3>
+<h3><a href="https://github.com/galvez-mcj/java-projects/tree/main/student-database">Student Database</a></h3>
 <p>
   <ul>
     <li>Created a cli for a student recording system.</li>
@@ -34,7 +34,7 @@
   </ul>
 </p>
 
-<h3>Employee Management</h3>
+<h3><a href="https://github.com/galvez-mcj/java-projects/tree/main/EmployeeManagement">Employee Management</a></h3>
 <h4><i>Work in progress</i></h4>
 <p>
   <ul>
