@@ -30,6 +30,7 @@ public class EmployeeRegister extends JDialog{
         setMinimumSize(new Dimension(480, 430));
         setModal(true);
         setLocationRelativeTo(parent);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         // initialize logo
         ImageIcon logoIcon = new ImageIcon("images/register.png");
@@ -55,7 +56,7 @@ public class EmployeeRegister extends JDialog{
             JOptionPane.showMessageDialog(this,
                     "Please fill out all the fields.",
                     "Try Again",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -73,14 +74,17 @@ public class EmployeeRegister extends JDialog{
         user = addToDatabase(lastName, firstName, phone, email, password);
 
         // more checks if user not added to db
-        if (user != null) {
+        if ( user != null ) {
+            JOptionPane.showMessageDialog(this,
+                    "Successfully registered new employee.",
+                    "Registration Successful",
+                    JOptionPane.INFORMATION_MESSAGE);
             dispose();
         } else {
             JOptionPane.showMessageDialog(this,
                     "Something went wrong. Please try again later.",
                     "Try Again",
                     JOptionPane.ERROR_MESSAGE);
-            return;
         }
     }
 
@@ -136,11 +140,13 @@ public class EmployeeRegister extends JDialog{
     public static void main(String[] args) {
         EmployeeRegister regForm = new EmployeeRegister(null);
         User user = regForm.user;
-        if ( user != null ) {
-            System.out.println("Employee successfully registered!");
-        } else {
-            System.out.println("Something went wrong.");
+        if ( user == null ) {
+            JOptionPane.showMessageDialog(regForm,
+                    "Registration Cancelled.",
+                    "Cancelled",
+                    JOptionPane.INFORMATION_MESSAGE);
         }
+        regForm.dispose();
     }
 
 }
