@@ -139,8 +139,7 @@ public class EmployeeDashboard extends JFrame{
 
 
     public static void main(String[] args) {
-//        EmployeeDashboard dashboard = new EmployeeDashboard(null);
-//        User user = dashboard.user;
+
     }
 
 }

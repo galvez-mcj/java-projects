@@ -118,7 +118,6 @@ public class EmployeeLogin extends JDialog{
 
     public static void main(String[] args) {
         EmployeeLogin loginForm = new EmployeeLogin(null);
-        User user = loginForm.user;
         loginForm.dispose();
     }
 }

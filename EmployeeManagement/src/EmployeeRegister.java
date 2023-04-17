@@ -138,13 +138,6 @@ public class EmployeeRegister extends JDialog{
 
     public static void main(String[] args) {
         EmployeeRegister regForm = new EmployeeRegister(null);
-//        User user = regForm.user;
-//        if ( user == null ) {
-//            JOptionPane.showMessageDialog(regForm,
-//                    "Registration Cancelled.",
-//                    "Cancelled",
-//                    JOptionPane.INFORMATION_MESSAGE);
-//        }
         regForm.dispose();
     }
 
