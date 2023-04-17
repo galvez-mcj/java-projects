@@ -8,16 +8,44 @@
 <p>
   <ul>
     <li>Created a basic calculator using Java Swing JFrame.</li>
-    <li>Functionalities include add, subtract, multiply, divide, square root, and raised to n.</li>
+    <li>Functionalities include: </li>
+      <ol>
+        <li>Addition</li>
+        <li>Subtraction</li>
+        <li>Multiplication</li>
+        <li>Division</li>
+        <li>Finding the square root of a number</li>
+        <li>Raising a number to a power</li>
+      </ol>
     <li>Precision of result only up to 4 decimal places.</li>
   </ul>
 </p>
 
-<h3>Student Databases</h3>
+<h3>Student Database</h3>
 <p>
   <ul>
     <li>Created a cli for a student recording system.</li>
-    <li>Functionalities include adding student/ multiple students, and viewing student records</li>
+    <li>Functionalities include:</li>
+      <ol>
+        <li>Adding student/ multiple students</li>
+        <li>Viewing student records</li>
+      </ol>
     <li><i>Practice for Object-oriented programming concepts</i></li>
   </ul>
 </p>
+
+<h3>Employee Management</h3>
+<h4><i>Work in progress</i></h4>
+<p>
+  <ul>
+    <li>Created a GUI for an employee management system</li>
+    <li>Functionalities include:</li>
+      <ol>
+        <li>Register - adds news employee to the database</li>
+        <li>Login - retrieves employee credentials from database to "login" to the system.</li>
+      </ol>
+    <li><i>Practice for Object-oriented programming concepts</i></li>
+  </ul>
+</p>
+
+
