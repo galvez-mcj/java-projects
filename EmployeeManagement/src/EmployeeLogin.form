@@ -13,7 +13,6 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <icon value="images/login.png"/>
           <text value=""/>
         </properties>
       </component>
@@ -50,10 +49,11 @@
         </constraints>
         <properties>
           <font name="Effra Light" size="16"/>
+          <labelFor value="f97f6"/>
           <text value="Email"/>
         </properties>
       </component>
-      <component id="f97f6" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+      <component id="f97f6" class="javax.swing.JTextField" binding="emailTextField" default-binding="true">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="100" height="25"/>
@@ -71,10 +71,11 @@
         </constraints>
         <properties>
           <font name="Effra Light" size="16"/>
+          <labelFor value="e8dba"/>
           <text value="Password"/>
         </properties>
       </component>
-      <component id="e8dba" class="javax.swing.JPasswordField" binding="passwordField1" default-binding="true">
+      <component id="e8dba" class="javax.swing.JPasswordField" binding="passwordField">
         <constraints>
           <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="100" height="25"/>
@@ -84,7 +85,7 @@
           <font name="Effra Light" size="16"/>
         </properties>
       </component>
-      <component id="ed905" class="javax.swing.JButton" binding="LOGINButton" default-binding="true">
+      <component id="ed905" class="javax.swing.JButton" binding="loginButton">
         <constraints>
           <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -96,7 +97,7 @@
           <text value="LOGIN"/>
         </properties>
       </component>
-      <component id="953d6" class="javax.swing.JButton" binding="CANCELButton" default-binding="true">
+      <component id="953d6" class="javax.swing.JButton" binding="cancelButton">
         <constraints>
           <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
