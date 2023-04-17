@@ -25,6 +25,7 @@
 <p>
   <ul>
     <li>Created a cli for a student recording system.</li>
+    <li>No persistent database. Only local storage.</li>
     <li>Functionalities include:</li>
       <ol>
         <li>Adding student/ multiple students</li>
@@ -39,6 +40,7 @@
 <p>
   <ul>
     <li>Created a GUI for an employee management system</li>
+    <li>Used MySQL for the database</li>
     <li>Functionalities include:</li>
       <ol>
         <li>Register - adds news employee to the database</li>
