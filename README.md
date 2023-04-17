@@ -36,7 +36,6 @@
 </p>
 
 <h3><a href="https://github.com/galvez-mcj/java-projects/tree/main/EmployeeManagement">Employee Management</a></h3>
-<h4><i>Work in progress</i></h4>
 <p>
   <ul>
     <li>Created a GUI for an employee management system</li>
