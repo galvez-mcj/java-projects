@@ -1,7 +1,8 @@
+import io.github.cdimascio.dotenv.Dotenv;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.sql.*;
 import java.util.Arrays;
 
 public class MovieSeatApp extends JDialog{
@@ -96,26 +97,235 @@ public class MovieSeatApp extends JDialog{
             triggerBtn(jButton);
         }
 
-        movieBox.addActionListener(e -> movieTextField.setText(movieBox.getSelectedItem().toString()));
+        // get movie list from db
+        getMovieListFromDB();
+
+        // get reserved seat from db
+
+        movieBox.addActionListener(e -> {
+            for (JButton jButton : Arrays.asList(a1Button, a2Button, a3Button, a4Button, a5Button,
+                    a6Button, a7Button, a8Button, a9Button, a10Button,
+                    b1Button, b2Button, b3Button, b4Button, b5Button,
+                    b6Button, b7Button, b8Button, b9Button, b10Button,
+                    c1Button, c2Button, c3Button, c4Button, c5Button,
+                    c6Button, c7Button, c8Button, c9Button, c10Button,
+                    d1Button, d2Button, d3Button, d4Button, d5Button, d6Button,
+                    d7Button, d8Button, d9Button, d10Button, d11Button, d12Button,
+                    e1Button, e2Button, e3Button, e4Button, e5Button, e6Button,
+                    e7Button, e8Button, e9Button, e10Button, e11Button, e12Button)) {
+                jButton.setEnabled(true);
+            }
+            movieTextField.setText(movieBox.getSelectedItem().toString());
+            getReservedSeatFromDB(movieBox.getSelectedItem().toString());
+        });
+
         reserveButton.addActionListener(e -> reserveSeat());
 
         // should always be last!!!!
         setVisible(true);
     }
 
+    private void getReservedSeatFromDB(String movie) {
+        int seat_code = 0;
+
+        // hard coded seat code
+        switch (movie) {
+            case "Leonor Will Never Die" -> seat_code = 100;
+            case "Everything Everywhere All at Once" -> seat_code = 200;
+        }
+
+        Dotenv dotenv = null;
+        dotenv = Dotenv.configure().load();
+        final String DB_URL = dotenv.get("DB_URL");
+        final String USERNAME = dotenv.get("USER_NAME");
+        final String PASSWORD = dotenv.get("PASSWORD");
+
+        try {
+            Connection connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            Statement statement = connection.createStatement();
+
+            // get all seats from seats table
+            String sql = "SELECT * FROM seat WHERE seat_code=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, seat_code);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()) {
+                do {
+                    disableButton(resultSet.getString("seat_row"), resultSet.getString("seat_col"));
+                } while (resultSet.next());
+            }
+
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void disableButton(String seatRow, String seatCol) {
+        String buttonName = seatRow + seatCol;
+        for (JButton jButton : Arrays.asList(a1Button, a2Button, a3Button, a4Button, a5Button,
+                a6Button, a7Button, a8Button, a9Button, a10Button,
+                b1Button, b2Button, b3Button, b4Button, b5Button,
+                b6Button, b7Button, b8Button, b9Button, b10Button,
+                c1Button, c2Button, c3Button, c4Button, c5Button,
+                c6Button, c7Button, c8Button, c9Button, c10Button,
+                d1Button, d2Button, d3Button, d4Button, d5Button, d6Button,
+                d7Button, d8Button, d9Button, d10Button, d11Button, d12Button,
+                e1Button, e2Button, e3Button, e4Button, e5Button, e6Button,
+                e7Button, e8Button, e9Button, e10Button, e11Button, e12Button)) {
+            //jButton.setEnabled(true);
+            String btnText = jButton.getText().toString();
+            if(btnText.equals(buttonName)) {
+                jButton.setEnabled(false);
+            }
+        }
+    }
+
+    private void getMovieListFromDB() {
+        Dotenv dotenv = null;
+        dotenv = Dotenv.configure().load();
+        final String DB_URL = dotenv.get("DB_URL");
+        final String USERNAME = dotenv.get("USER_NAME");
+        final String PASSWORD = dotenv.get("PASSWORD");
+
+        try {
+            Connection connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            Statement statement = connection.createStatement();
+            String sql = "SELECT * FROM cinema";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                do {
+                    movieBox.addItem(resultSet.getString("title"));
+                } while (resultSet.next());
+            }
+            // close connection
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void reserveSeat() {
         String row = rowComboBox.getSelectedItem().toString();
         String column = columnComboBox.getSelectedItem().toString();
-        Seat seat = new Seat(row, column);
-        System.out.println(seat.getRow() + seat.getColumn() + " " + seat.isAvailable());
+        String movie = movieTextField.getText();
 
         String firstname = firstnameTextField.getText();
         String lastname = lastnameTextField.getText();
         String phone = phoneNumberTextField.getText();
         String email = emailTextField.getText();
-        Patron patron = new Patron(lastname, firstname, phone, email);
 
+        // check all fields are filled out
+        if (firstname.isEmpty() || lastname.isEmpty() || phone.isEmpty() || email.isEmpty() || movie == "---" || row == "-" || column == "-") {
+            JOptionPane.showMessageDialog(this,
+                                          "Fill out all fields",
+                                          "Details Incomplete",
+                                          JOptionPane.ERROR_MESSAGE);
+        } else {
+            Seat seat = new Seat(row, column);
+            Patron patron = new Patron(lastname, firstname, phone, email);
+            // add to database
+            addToDatabase(movie, seat, patron);
+            disableButton(row, column);
+        }
+    }
 
+    private void addToDatabase(String movie, Seat seat, Patron patron) {
+        int seat_code = 0;
+
+        // hard coded seat code
+        switch (movie) {
+            case "Leonor Will Never Die" -> seat_code = 100;
+            case "Everything Everywhere All at Once" -> seat_code = 200;
+        }
+
+        Dotenv dotenv = null;
+        dotenv = Dotenv.configure().load();
+        final String DB_URL = dotenv.get("DB_URL");
+        final String USERNAME = dotenv.get("USER_NAME");
+        final String PASSWORD = dotenv.get("PASSWORD");
+
+        try {
+            Connection connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            Statement statement = connection.createStatement();
+            String sql = "INSERT INTO patron (lastname, firstname, phone, email)" +
+                    "VALUES (?, ?, ?, ?)";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, patron.getLastname());
+            preparedStatement.setString(2, patron.getFirstname());
+            preparedStatement.setString(3, patron.getPhone());
+            preparedStatement.setString(4, patron.getEmail());
+            preparedStatement.executeUpdate();
+
+            // get patron ID to store to seat table
+            ResultSet rs = preparedStatement.getGeneratedKeys();
+            int patronID = 0;
+            if (rs.next()) {
+                patronID = rs.getInt(1);
+                // only add if patron created
+                addSeatToDatabase(seat_code, seat, patronID);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Something went wrong. Try again later",
+                        "Try Again",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Something went wrong. Try again later.",
+                    "Try Again",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void addSeatToDatabase(int seat_code, Seat seat, int patronID) {
+        Dotenv dotenv = null;
+        dotenv = Dotenv.configure().load();
+        final String DB_URL = dotenv.get("DB_URL");
+        final String USERNAME = dotenv.get("USER_NAME");
+        final String PASSWORD = dotenv.get("PASSWORD");
+
+        try {
+            Connection connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+
+            Statement statement = connection.createStatement();
+            String sql2 = "INSERT INTO seat (seat_code, seat_row, seat_col, patron_id)" +
+                    "VALUES (?, ?, ?, ?)";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql2);
+            preparedStatement.setInt(1, seat_code);
+            preparedStatement.setString(2, seat.getRow());
+            preparedStatement.setString(3, seat.getColumn());
+            preparedStatement.setInt(4, patronID);
+            int addedRow = preparedStatement.executeUpdate();
+
+            if (addedRow > 0) {
+                JOptionPane.showMessageDialog(this,
+                        "Successfully reserved your seat!",
+                        "Reservation Successful",
+                        JOptionPane.PLAIN_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Something went wrong. Seat not reserved.",
+                        "Try Again",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+
+            // close connection
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
