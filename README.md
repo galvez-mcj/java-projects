@@ -51,4 +51,21 @@
   </ul>
 </p>
 
+<h3><a href="https://github.com/galvez-mcj/java-projects/tree/main/SeatRerservation">Movie Seat Reservation System</a></h3>
+<p>
+  <ul>
+    <li>Created a GUI for movie seat reservation</li>
+    <li>Used MySQL for the database</li>
+    <li>Functionalities include:</li>
+      <ol>
+        <li>Choosing movie from a list of available movies</li>
+        <li>Viewing available seats for the chosen movie</li>
+        <li>Choosing seat to be reserved</li>
+        <li>Filling out reservation form</li>
+      </ol>
+    <li><i>Practice for Object-oriented programming concepts</i></li>
+  </ul>
+</p>
+
+
 
