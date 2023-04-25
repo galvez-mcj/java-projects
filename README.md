@@ -67,5 +67,21 @@
   </ul>
 </p>
 
+<h3><a href="https://github.com/galvez-mcj/java-projects/tree/main/SchoolManagement">School Management System</a></h3>
+<p>currently a work in progress</p>
+<p>
+  <ul>
+    <li>Created a GUI for an imaginary school</li>
+    <li>Used MySQL for the database</li>
+    <li>Admin functionalities include:</li>
+      <ol>
+        <li>Create users (admin, faculty, student)</li>
+        <li>View all users</li>
+        <li>Edit user details</li>
+        <li>Delete user from database</li>
+      </ol>
+  </ul>
+</p>
+
 
 
