@@ -30,7 +30,7 @@ public class CreateUser extends javax.swing.JFrame {
         initComponents();
         editBtn.setEnabled(false);
         deleteBtn.setEnabled(false);
-        ConnectDB();
+        conn = DatabaseFunctionalities.connectDB();
         LoadUsers();
     }
     
@@ -41,22 +41,6 @@ public class CreateUser extends javax.swing.JFrame {
     PreparedStatement pst;
     ResultSet rs;
     DefaultTableModel usersTable;
-    
-    public final void ConnectDB() {
-        Dotenv dotenv = Dotenv.configure().load();
-        final String DB_URL = dotenv.get("DB_URL");
-        final String USERNAME = dotenv.get("USER_NAME");
-        final String PASSWORD = dotenv.get("PASSWORD");
-        
-        try {
-            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Error connecting to database.",
-                    "Database Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }   
-    }
     
     /**
      * Fetch data from database and display to GUI

@@ -26,33 +26,17 @@ public class LoginForm extends javax.swing.JFrame {
      */
     public LoginForm() {
         initComponents();
-        ConnectDB();
+        conn = DatabaseFunctionalities.connectDB();
     }
     
-        /**
+    /**
      * Start a MySQL connection
      */
     Connection conn;
     PreparedStatement pst;
     ResultSet rs;
     DefaultTableModel usersTable;
-    
-    public final void ConnectDB() {
-        Dotenv dotenv = Dotenv.configure().load();
-        final String DB_URL = dotenv.get("DB_URL");
-        final String USERNAME = dotenv.get("USER_NAME");
-        final String PASSWORD = dotenv.get("PASSWORD");
         
-        try {
-            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Error connecting to database.",
-                    "Database Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }   
-    }
-    
     
     public void GetUser(String email, String password) {
         try {

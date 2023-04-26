@@ -251,6 +251,7 @@ public class StudentDashboard extends javax.swing.JFrame {
         // TODO add your handling code here:
         enableFields(true);
         saveBtn.setEnabled(true);
+        
     }//GEN-LAST:event_editBtnActionPerformed
 
     private void viewClassBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewClassBtnActionPerformed
