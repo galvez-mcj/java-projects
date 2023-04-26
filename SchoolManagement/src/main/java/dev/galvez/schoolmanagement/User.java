@@ -9,7 +9,7 @@ package dev.galvez.schoolmanagement;
  * @author Christina
  */
 public class User {
-    //private int userID;
+    private int userID;
     private String lastName;
     private String firstName;
     private long phone;
@@ -17,14 +17,19 @@ public class User {
     private String password;
     private String userType;
 
-    public User(String lastName, String firstName, long phone, String email, String password, String userType) {
-        //this.userID = userID;
+    public User(int userID, String lastName, String firstName, long phone, String email, String password, String userType) {
+        this.userID = userID;
         this.lastName = lastName;
         this.firstName = firstName;
         this.phone = phone;
         this.email = email;
         this.password = password;
         this.userType = userType;
+    }
+    
+    
+    public int getUserID() {
+        return userID;
     }
 
     public String getLastName() {

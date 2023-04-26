@@ -47,12 +47,13 @@ public class LoginForm extends javax.swing.JFrame {
             rs = pst.executeQuery();
             
             if (rs.next()) {
+                int id = rs.getInt("userID");
                 String lastName = rs.getString("lastName");
                 String firstName = rs.getString("firstName");
                 long phone = rs.getLong("phoneNumber");
                 String userType = rs.getString("userType");
                 
-                User user = new User(lastName, firstName, phone, email, password, userType);
+                User user = new User(id, lastName, firstName, phone, email, password, userType);
                 
                 JOptionPane.showMessageDialog(this,
                     String.format("Welcome back, %s %s", firstName, lastName),

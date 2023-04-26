@@ -425,9 +425,6 @@ public class CreateUser extends javax.swing.JFrame {
             editBtn.setEnabled(false);
             deleteBtn.setEnabled(false);
             saveBtn.setEnabled(true);
-        } else {
-            // nothing
-            
         }
     }//GEN-LAST:event_deleteBtnActionPerformed
 

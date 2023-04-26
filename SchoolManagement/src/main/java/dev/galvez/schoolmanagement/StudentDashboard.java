@@ -4,17 +4,33 @@
  */
 package dev.galvez.schoolmanagement;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Christina
  */
 public class StudentDashboard extends javax.swing.JFrame {
 
+    Connection conn;
+    PreparedStatement pst;
+    ResultSet rs;
+    private User user;
+    
     /**
      * Creates new form StudentDashboard
+     * @param user
      */
     public StudentDashboard(User user) {
         initComponents();
+        conn = DatabaseFunctionalities.connectDB();
+        this.user = user;
         introLabel.setText("Welcome back, " + user.getFirstName());
         saveBtn.setEnabled(false);
         fillDashboard(user);
@@ -263,7 +279,13 @@ public class StudentDashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_logoutBtnActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
-        
+        user.setLastName(lastNameField.getText());
+        user.setFirstName(firstNameField.getText());
+        user.setPhone(Long.parseLong(phoneField.getText()));
+        user.setEmail(emailField.getText());
+        user.setPassword(String.valueOf(passwordField.getPassword()));
+        updateUser(user);
+        enableFields(false);
     }//GEN-LAST:event_saveBtnActionPerformed
 
 //    /**
@@ -330,6 +352,39 @@ public class StudentDashboard extends javax.swing.JFrame {
             phoneField.setText(String.valueOf(user.getPhone()));
             emailField.setText(user.getEmail());
             passwordField.setText(user.getPassword());
+        }
+    }
+    
+    private void updateUser(User user) {
+        String userType = user.getUserType();
+        String lastName = user.getLastName();
+        String firstName = user.getFirstName();
+        long phone = user.getPhone();
+        String email = user.getEmail();
+        int id = user.getUserID();
+        
+        try {          
+            String sql = "UPDATE user SET userType=?, lastName=?, firstName=?, phoneNumber=?, email=?"
+                    + "WHERE userID=?";
+
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userType);
+            pst.setString(2, lastName);
+            pst.setString(3, firstName);
+            pst.setLong(4, phone);
+            pst.setString(5, email);
+            pst.setInt(6, id);
+            int rows = pst.executeUpdate();
+            
+            if (rows > 0) {
+                JOptionPane.showMessageDialog(this,
+                    "User Successfully Updated.",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+            }
+            
+        } catch (SQLException ex) {
+                Logger.getLogger(CreateUser.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
