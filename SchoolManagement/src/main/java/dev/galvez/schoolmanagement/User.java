@@ -8,11 +8,14 @@ import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -25,7 +28,10 @@ public class User extends javax.swing.JFrame {
      */
     public User() {
         initComponents();
+        editBtn.setEnabled(false);
+        deleteBtn.setEnabled(false);
         ConnectDB();
+        LoadUsers();
     }
     
     /**
@@ -33,24 +39,90 @@ public class User extends javax.swing.JFrame {
      */
     Connection conn;
     PreparedStatement pst;
+    ResultSet rs;
+    DefaultTableModel usersTable;
     
-    public void ConnectDB() {
-        Dotenv dotenv = null;
-        dotenv = Dotenv.configure().load();
+    public final void ConnectDB() {
+        Dotenv dotenv = Dotenv.configure().load();
         final String DB_URL = dotenv.get("DB_URL");
         final String USERNAME = dotenv.get("USER_NAME");
         final String PASSWORD = dotenv.get("PASSWORD");
         
-        System.out.println(DB_URL + " " + USERNAME + " " + PASSWORD);
+        try {
+            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error connecting to database.",
+                    "Database Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }   
+    }
+    
+    /**
+     * Fetch data from database and display to GUI
+     */
+    public final void LoadUsers() {
         
         try {
-            //Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-        } catch (Exception e) {
-            e.printStackTrace();
+            String sql = "SELECT * FROM user";
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+            
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int colCount = rsmd.getColumnCount();
+            usersTable = (DefaultTableModel) usersTableGUI.getModel();
+            usersTable.setRowCount(0);
+            
+            while (rs.next()) {
+                Vector rowContent = new Vector();
+                for (int i = 0; i < colCount; i++) {
+                    rowContent.add(rs.getString("userID"));
+                    rowContent.add(rs.getString("lastName"));
+                    rowContent.add(rs.getString("firstName"));
+                    rowContent.add(rs.getString("phoneNumber"));
+                    rowContent.add(rs.getString("email"));
+                    rowContent.add(rs.getString("userType"));
+                }
+                usersTable.addRow(rowContent);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
+    
+    /**
+     * Disable Fields
+     * @param isEnabled
+     */
+    public void enableFields(boolean isEnabled) {
+        lastNameField.setEnabled(isEnabled);
+        firstNameField.setEnabled(isEnabled);
+        phoneField.setEnabled(isEnabled);
+        emailField.setEnabled(isEnabled);
+        userTypeComboBox.setEnabled(isEnabled);
+        passwordField.setEnabled(isEnabled);
+    }
+    
+    /**
+     * Clear Fields
+     */
+    public void clearFields() {
+        lastNameField.setText("");
+        firstNameField.setText("");
+        phoneField.setText("");
+        emailField.setText("");
+        passwordField.setText("");
+        userTypeComboBox.setSelectedIndex(0);
+        lastNameField.requestFocus();
+    }
+    
+    public static Long tryParse(String text) {
+        try {
+          return Long.parseLong(text);
+        } catch (NumberFormatException e) {
+          return 0L;
+        }
+      }
     
 
     /**
@@ -82,7 +154,7 @@ public class User extends javax.swing.JFrame {
         editBtn = new javax.swing.JButton();
         clearBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        usersTableGUI = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -182,8 +254,8 @@ public class User extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        usersTableGUI.setFont(new java.awt.Font("Montserrat", 0, 12)); // NOI18N
+        usersTableGUI.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -199,7 +271,12 @@ public class User extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        usersTableGUI.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                usersTableGUIMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(usersTableGUI);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -312,68 +389,100 @@ public class User extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
-        // TODO add your handling code here:
         String userType = userTypeComboBox.getSelectedItem().toString();
         String lastName = lastNameField.getText();
         String firstName = firstNameField.getText();
-        int phone = Integer.parseInt(phoneField.getText());
+        String phoneStr = phoneField.getText();
+        long phone = tryParse(phoneStr);
         String email = emailField.getText();
         String password = String.valueOf(passwordField.getPassword());
         
-        if (lastName.isEmpty() || firstName.isEmpty() || email.isEmpty() || password.isEmpty() || phone == 0 ) {
-            JOptionPane.showMessageDialog(this,
-                    "Please fill out all the fields.",
-                    "Try Again",
-                    JOptionPane.WARNING_MESSAGE);
-        }
+        usersTable = (DefaultTableModel) usersTableGUI.getModel(); 
+        int selectedIndex = usersTableGUI.getSelectedRow();
+
         
-        try {
-            String sql = "INSERT INTO user (userType, lastName, firstName, phoneNumber, email, password) VALUES (?, ?, ?, ?, ?, ?)";
-            
-            pst = conn.prepareStatement(sql);
-            pst.setString(1, userType);
-            pst.setString(2, lastName);
-            pst.setString(3, firstName);
-            pst.setInt(4, phone);
-            pst.setString(5, email);
-            pst.setString(6, password);
-            int rows = pst.executeUpdate();
-            
-            if (rows > 0) {
+        // search if record exists
+        if (selectedIndex > 0) {
+            int id = Integer.parseInt(usersTable.getValueAt(selectedIndex, 0).toString());
+            updateUser(userType, lastName, firstName, phone, email, id);
+            passwordField.setEnabled(true);
+        } else {
+            if (userType.isEmpty() || lastName.isEmpty() || firstName.isEmpty() || email.isEmpty() || password.isEmpty() || phone == 0L) {
                 JOptionPane.showMessageDialog(this,
-                    "User Successfully Added.",
-                    "Success",
-                    JOptionPane.INFORMATION_MESSAGE);
+                        "Please fill out all the fields.",
+                        "Try Again",
+                        JOptionPane.WARNING_MESSAGE);
+            } else {
+                addUser(userType, lastName, firstName, phone, email, password);
             }
-            
-            // clear all fields
-            lastNameField.setText("");
-            firstNameField.setText("");
-            phoneField.setText("");
-            emailField.setText("");
-            passwordField.setText("");
-            userTypeComboBox.setSelectedIndex(-1);
-            lastNameField.requestFocus();
-            
-            // close SQL connection
-            conn.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }//GEN-LAST:event_saveBtnActionPerformed
 
     private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
         // TODO add your handling code here:
+        String[] options = {"Confirm", "Cancel"};
+        int choice = JOptionPane.showOptionDialog(null, 
+                                                    "Are you sure you want to delete this record?",
+                                                    "Delete Confirmation",
+                                                    JOptionPane.DEFAULT_OPTION, 
+                                                    JOptionPane.INFORMATION_MESSAGE, 
+                                                    null, 
+                                                    options, 
+                                                    options[0]);
+        
+        if (choice == 0) {
+            // delete
+            usersTable = (DefaultTableModel) usersTableGUI.getModel(); 
+            int selectedIndex = usersTableGUI.getSelectedRow();
+            int id = Integer.parseInt(usersTable.getValueAt(selectedIndex, 0).toString());
+            deleteUser(id);
+            enableFields(true);
+            usersTableGUI.clearSelection();
+            editBtn.setEnabled(false);
+            deleteBtn.setEnabled(false);
+            saveBtn.setEnabled(true);
+        } else {
+            // nothing
+            
+        }
     }//GEN-LAST:event_deleteBtnActionPerformed
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
         // TODO add your handling code here:
+        enableFields(true);
+        passwordField.setEnabled(false);    
+        saveBtn.setEnabled(true);
     }//GEN-LAST:event_editBtnActionPerformed
 
     private void clearBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearBtnActionPerformed
         // TODO add your handling code here:
+        clearFields();
+        enableFields(true);
+        usersTableGUI.clearSelection();
+        editBtn.setEnabled(false);
+        deleteBtn.setEnabled(false);
+        saveBtn.setEnabled(true);
     }//GEN-LAST:event_clearBtnActionPerformed
+
+    private void usersTableGUIMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_usersTableGUIMouseClicked
+        // TODO add your handling code here:
+        usersTable = (DefaultTableModel) usersTableGUI.getModel(); 
+        int selectedIndex = usersTableGUI.getSelectedRow();
+        
+        //String id = usersTable.getValueAt(selectedIndex, 0).toString();
+        // set all fields
+        lastNameField.setText(usersTable.getValueAt(selectedIndex, 1).toString());
+        firstNameField.setText(usersTable.getValueAt(selectedIndex, 2).toString());
+        phoneField.setText(usersTable.getValueAt(selectedIndex, 3).toString());
+        emailField.setText(usersTable.getValueAt(selectedIndex, 4).toString());
+        userTypeComboBox.setSelectedItem(usersTable.getValueAt(selectedIndex, 5).toString());
+
+        // disable the fields
+        enableFields(false);
+        editBtn.setEnabled(true);
+        deleteBtn.setEnabled(true);
+        saveBtn.setEnabled(false);
+    }//GEN-LAST:event_usersTableGUIMouseClicked
 
     /**
      * @param args the command line arguments
@@ -422,7 +531,6 @@ public class User extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField lastNameField;
     private javax.swing.JLabel lastNameLabel;
     private javax.swing.JPasswordField passwordField;
@@ -432,5 +540,82 @@ public class User extends javax.swing.JFrame {
     private javax.swing.JButton saveBtn;
     private javax.swing.JComboBox<String> userTypeComboBox;
     private javax.swing.JLabel userTypeLabel;
+    private javax.swing.JTable usersTableGUI;
     // End of variables declaration//GEN-END:variables
+
+    private void addUser(String userType, String lastName, String firstName, long phone, String email, String password) {
+        try {
+            String sql = "INSERT INTO user (userType, lastName, firstName, phoneNumber, email, password) VALUES (?, ?, ?, ?, ?, ?)";
+
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userType);
+            pst.setString(2, lastName);
+            pst.setString(3, firstName);
+            pst.setLong(4, phone);
+            pst.setString(5, email);
+            pst.setString(6, password);
+            int rows = pst.executeUpdate();
+
+            if (rows > 0) {
+                JOptionPane.showMessageDialog(this,
+                    "User Successfully Added.",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+                // clear all fields
+                clearFields();
+                LoadUsers();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateUser(String userType, String lastName, String firstName, long phone, String email, int id) {
+        try {          
+            String sql = "UPDATE user SET userType=?, lastName=?, firstName=?, phoneNumber=?, email=?"
+                    + "WHERE userID=?";
+
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, userType);
+            pst.setString(2, lastName);
+            pst.setString(3, firstName);
+            pst.setLong(4, phone);
+            pst.setString(5, email);
+            pst.setInt(6, id);
+            int rows = pst.executeUpdate();
+            
+            if (rows > 0) {
+                JOptionPane.showMessageDialog(this,
+                    "User Successfully Updated.",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+                clearFields();
+                LoadUsers();
+            }
+            
+        } catch (SQLException ex) {
+                Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void deleteUser(int id) {
+        try {
+            String sql = "DELETE FROM user WHERE userID=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1, id);
+            int rows = pst.executeUpdate();
+            
+            if (rows > 0) {
+                JOptionPane.showMessageDialog(this,
+                    "User Successfully Deleted.",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+                clearFields();
+                LoadUsers();
+            }
+            
+        } catch (SQLException ex) {
+                Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
