@@ -11,6 +11,8 @@ package dev.galvez.schoolmanagement;
 public class SchoolManagement {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        java.awt.EventQueue.invokeLater(() -> {
+            new LoginForm().setVisible(true);
+        });
     }
 }

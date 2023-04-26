@@ -272,10 +272,17 @@ public class StudentDashboard extends javax.swing.JFrame {
 
     private void viewClassBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewClassBtnActionPerformed
         // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(() -> {
+            new ViewClasses().setVisible(true);
+        });
     }//GEN-LAST:event_viewClassBtnActionPerformed
 
     private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutBtnActionPerformed
         // TODO add your handling code here:
+        dispose();
+        java.awt.EventQueue.invokeLater(() -> {
+            new LoginForm().setVisible(true);
+        });
     }//GEN-LAST:event_logoutBtnActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
@@ -361,10 +368,11 @@ public class StudentDashboard extends javax.swing.JFrame {
         String firstName = user.getFirstName();
         long phone = user.getPhone();
         String email = user.getEmail();
+        String password = user.getPassword();
         int id = user.getUserID();
         
         try {          
-            String sql = "UPDATE user SET userType=?, lastName=?, firstName=?, phoneNumber=?, email=?"
+            String sql = "UPDATE user SET userType=?, lastName=?, firstName=?, phoneNumber=?, email=?, password=? "
                     + "WHERE userID=?";
 
             pst = conn.prepareStatement(sql);
@@ -373,7 +381,8 @@ public class StudentDashboard extends javax.swing.JFrame {
             pst.setString(3, firstName);
             pst.setLong(4, phone);
             pst.setString(5, email);
-            pst.setInt(6, id);
+            pst.setString(6, password);
+            pst.setInt(7, id);
             int rows = pst.executeUpdate();
             
             if (rows > 0) {
