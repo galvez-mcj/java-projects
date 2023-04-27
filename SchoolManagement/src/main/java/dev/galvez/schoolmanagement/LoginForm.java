@@ -73,8 +73,8 @@ public class LoginForm extends javax.swing.JFrame {
                         });
                     case "Admin" ->
                         java.awt.EventQueue.invokeLater(() -> {
-                            new CreateUser().setVisible(true);
-                        });
+                            new AdminDashboard().setVisible(true);
+                });
                 }
             } else {
                 JOptionPane.showMessageDialog(this,

@@ -30,7 +30,7 @@ public class ViewClasses extends javax.swing.JFrame {
         introLabel = new javax.swing.JLabel();
         lastNameLabel1 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(0, 123, 255));
 
