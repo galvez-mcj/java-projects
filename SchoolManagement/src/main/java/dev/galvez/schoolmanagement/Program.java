@@ -9,5 +9,35 @@ package dev.galvez.schoolmanagement;
  * @author Christina
  */
 public class Program {
+    private final int programID;
+    private String programName;
+    private String programSection;
+
+    public Program(int programID, String programName, String programSection) {
+        this.programID = programID;
+        this.programName = programName;
+        this.programSection = programSection;
+    }
+
+    public int getProgramID() {
+        return programID;
+    }
+
+    public String getProgramName() {
+        return programName;
+    }
+
+    public void setProgramName(String programName) {
+        this.programName = programName;
+    }
+
+    public String getProgramSection() {
+        return programSection;
+    }
+
+    public void setProgramSection(String programSection) {
+        this.programSection = programSection;
+    }
+    
     
 }
